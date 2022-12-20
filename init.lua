@@ -90,6 +90,7 @@ core.register_tool("gravgun:gravgun",{
 	end
 	if pointed_thing.type == "node" then
 		local pos = pointed_thing.under
+		if core.is_protected(pos,name) then return end
 		local fnode = core.spawn_falling_node(pos)
 		if fnode then
 			local objs = core.get_objects_inside_radius(pos, 0)
