@@ -95,6 +95,10 @@ core.register_tool("gravgun:gravgun",{
 		if fnode then
 			local objs = core.get_objects_inside_radius(pos, 0)
 			if objs then
+				local entity = objs[1]:get_luaentity()
+				if entity then
+					entity.owner = name
+				end
 				grabbing[name] = objs[1]
 			end
 		end
