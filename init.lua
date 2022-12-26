@@ -43,7 +43,7 @@ core.register_globalstep(function(dtime)
 					local ppos = player:get_pos()
 					ppos.y = ppos.y + 1.7
 					local dir = player:get_look_dir()
-					local opos = ppos + range[name]*dir
+					local opos = {x=ppos.x + range[name]*dir.x,y=ppos.y + range[name]*dir.y,z=ppos.z + range[name]*dir.z}
 					obj:move_to(opos, true)
 					obj:set_physics_override({gravity=0})
 					obj:set_acceleration({x=0,y=0,z=0})
@@ -79,7 +79,7 @@ core.register_tool("gravgun:gravgun",{
 		local ctrl = player and player:get_player_control()
 		if ctrl and ctrl.aux1 then
 			local dir = player:get_look_dir()
-			obj:add_velocity(dir*30)
+			obj:add_velocity({x=dir.x*30,y=dir.y*30,z=dir.z*30})
 		end
 		grabbing[name] = nil
 		range[name] = nil
