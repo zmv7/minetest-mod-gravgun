@@ -41,7 +41,8 @@ core.register_globalstep(function(dtime)
 					end
 					local obj = grabbing[name]
 					local ppos = player:get_pos()
-					ppos.y = ppos.y + 1.7
+					local props = player:get_properties()
+					ppos.y = ppos.y + props.eye_height
 					local dir = player:get_look_dir()
 					local opos = {x=ppos.x + range[name]*dir.x,y=ppos.y + range[name]*dir.y,z=ppos.z + range[name]*dir.z}
 					obj:move_to(opos, true)
@@ -86,7 +87,13 @@ core.register_tool("gravgun:gravgun",{
 		return
 	end
 	if pointed_thing.type == "object" then
-		grabbing[name] = pointed_thing.ref
+		local obj = pointed_thing.ref
+		if obj:is_player() then
+			if not core.check_player_privs(name,{gravgun_op=true}) then
+				return
+			end
+		end
+		grabbing[name] = obj
 	end
 	if pointed_thing.type == "node" then
 		local pos = pointed_thing.under
@@ -95,11 +102,13 @@ core.register_tool("gravgun:gravgun",{
 		if fnode then
 			local objs = core.get_objects_inside_radius(pos, 0)
 			if objs then
-				local entity = objs[1]:get_luaentity()
-				if entity then
-					entity.owner = name
+				for _,obj in ipairs(objs) do
+					local entity = obj and obj:get_luaentity()
+					if entity and entity.name == "__builtin:falling_node" then
+						entity.owner = name
+						grabbing[name] = obj
+					end
 				end
-				grabbing[name] = objs[1]
 			end
 		end
 	end
@@ -107,3 +116,5 @@ core.register_tool("gravgun:gravgun",{
   on_place = freeze,
   on_secondary_use = freeze
 })
+
+core.register_privilege("gravgun_op",{description="Allows to grab players with gravgun",give_to_singleplayer=false})
