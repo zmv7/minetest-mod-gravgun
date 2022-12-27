@@ -7,6 +7,7 @@ Gravity gun that can grab, freeze and throw nodes and objects
 * LMB + aux1 - throw object away
 * Sneak + LMB - increase grabbing distance
 * Sneak + RMB - decrease grabbing distance
+* Grant `gravgun_op` privilege to get able to grab **players** with gravity gun
 #### Note
 * Complex objects(mobs, vehicles, etc) from other mods may start falling during grabbing, may not freeze in air or may not throw.
 ### License of media (textures and model)
