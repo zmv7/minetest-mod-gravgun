@@ -1,6 +1,10 @@
 local grabbing = {}
 local range = {}
 
+local special_nodes = { --to prevent duping. Use RegExp.
+	"itemframe",
+}
+
 local function is_sneak(player)
 	local ctrl = player and player:get_player_control()
 	if ctrl and ctrl.sneak then
@@ -98,6 +102,13 @@ core.register_tool("gravgun:gravgun",{
 	if pointed_thing.type == "node" then
 		local pos = pointed_thing.under
 		if core.is_protected(pos,name) then return end
+		local node = core.get_node(pos)
+		for i,nname in ipairs(special_nodes) do
+			if node.name:match(nname) and not core.check_player_privs(name,{gravgun_op=true}) then
+				core.chat_send_player(name, "You're not allowed to grab this!")
+				return itemstack
+			end
+		end
 		local fnode = core.spawn_falling_node(pos)
 		if fnode then
 			local objs = core.get_objects_inside_radius(pos, 0)
@@ -117,4 +128,4 @@ core.register_tool("gravgun:gravgun",{
   on_secondary_use = freeze
 })
 
-core.register_privilege("gravgun_op",{description="Allows to grab players with gravgun",give_to_singleplayer=false})
+core.register_privilege("gravgun_op",{description="Allows to grab players and special nodes with gravgun",give_to_singleplayer=false})
