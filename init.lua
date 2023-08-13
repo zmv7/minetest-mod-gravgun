@@ -5,6 +5,8 @@ local special_nodes = { --to prevent duping. Use RegExp.
 	"itemframe",
 	"sand_with_kelp",
 	"coral_",
+	"default:chest",
+	"furnace",
 }
 
 local function is_sneak(player)
