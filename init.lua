@@ -9,6 +9,10 @@ local special_nodes = { --to prevent duping. Use RegExp.
 	"furnace",
 }
 
+local special_objects = {
+	"custompainting",
+}
+
 local function is_sneak(player)
 	local ctrl = player and player:get_player_control()
 	if ctrl and ctrl.sneak then
@@ -94,8 +98,20 @@ core.register_tool("gravgun:gravgun",{
 		range[name] = nil
 		return
 	end
+	local pos = pointed_thing.under
+	if pos and core.is_protected(pos, name) then
+		core.record_protection_violation(pos, name)
+		return
+	end
 	if pointed_thing.type == "object" then
 		local obj = pointed_thing.ref
+		local lename = obj:get_luaentity().name
+		for i,oname in ipairs(special_objects) do
+			if lename:match(oname) and not core.check_player_privs(name,{gravgun_op=true}) then
+				core.chat_send_player(name, "You're not allowed to grab this!")
+				return itemstack
+			end
+		end
 		if obj:is_player() then
 			if not core.check_player_privs(name,{gravgun_op=true}) then
 				return
@@ -104,8 +120,6 @@ core.register_tool("gravgun:gravgun",{
 		grabbing[name] = obj
 	end
 	if pointed_thing.type == "node" then
-		local pos = pointed_thing.under
-		if core.is_protected(pos,name) then return end
 		local node = core.get_node(pos)
 		for i,nname in ipairs(special_nodes) do
 			if node.name:match(nname) and not core.check_player_privs(name,{gravgun_op=true}) then
